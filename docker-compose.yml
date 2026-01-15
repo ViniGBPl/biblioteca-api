@@ -18,3 +18,15 @@ services:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ports:
       - "9200:9200"
+
+  api:
+    build: .
+    container_name: biblioteca-api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - elasticsearch
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/biblioteca_db
+      - SPRING_ELASTICSEARCH_URIS=http://elasticsearch:9200
