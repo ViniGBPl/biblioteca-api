@@ -5,6 +5,7 @@ import com.ViniGBPl.biblioteca.domain.service.EmprestimoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity; // Import necessário
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,4 +25,11 @@ public class EmprestimoController {
         }
         return ResponseEntity.ok(resultado);
     }
+
+    @PostMapping("/devolucao")
+    public ResponseEntity<String> devolver(@RequestParam Long livroId) {
+        String mensagem = emprestimoService.devolverLivro(livroId);
+        return ResponseEntity.ok(mensagem);
+    }
+
 }
