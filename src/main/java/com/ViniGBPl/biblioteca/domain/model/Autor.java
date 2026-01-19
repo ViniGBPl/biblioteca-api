@@ -3,6 +3,8 @@ package com.ViniGBPl.biblioteca.domain.model;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 @Entity
 @Getter
@@ -22,6 +24,7 @@ public class Autor {
 
     private String nacionalidade;
 
+    @JsonIgnore // Esta linha resolve o erro de recursão infinita
     @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL)
     private List<Livro> livros;
 
