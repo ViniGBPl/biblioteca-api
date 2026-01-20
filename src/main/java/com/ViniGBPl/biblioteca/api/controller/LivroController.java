@@ -26,7 +26,18 @@ public class LivroController {
     }
 
     @GetMapping("/busca")
-    public List<LivroDocument> buscar(@RequestParam String titulo) {
-        return livroSearchRepository.findByTituloContaining(titulo);
+    public List<LivroDocument> buscar(
+            @RequestParam(required = false) String titulo,
+            @RequestParam(required = false) String genero) {
+
+        if (titulo != null && genero != null) {
+            return livroSearchRepository.findByTituloContainingAndNomesGeneros(titulo, genero);
+        } else if (titulo != null) {
+            return livroSearchRepository.findByTituloContaining(titulo);
+        } else if (genero != null) {
+            return livroSearchRepository.findByNomesGeneros(genero);
+        }
+
+        return List.of();
     }
 }
