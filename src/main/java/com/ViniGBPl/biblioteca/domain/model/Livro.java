@@ -3,6 +3,8 @@ package com.ViniGBPl.biblioteca.domain.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 
 @Entity
 @Getter
@@ -29,8 +31,17 @@ public class Livro {
     @JoinColumn(name ="auto_id" , nullable = false)
     private Autor autor;
 
-    //Campo para controlar a disponibilidade
+
+    @Column(nullable = false)
     @Builder.Default
     private Boolean disponivel = true;
+
+    @ManyToMany
+    @JoinTable(
+            name = "livro_genero",
+            joinColumns = @JoinColumn(name = "livro_id"),
+            inverseJoinColumns = @JoinColumn(name = "genero_id")
+    )
+    private List<Genero> generos;
 
 }

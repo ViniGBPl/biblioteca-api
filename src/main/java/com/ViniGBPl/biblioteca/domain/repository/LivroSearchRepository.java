@@ -6,4 +6,10 @@ import java.util.List;
 
 public interface LivroSearchRepository extends ElasticsearchRepository<LivroDocument, String> {
     List<LivroDocument> findByTituloContaining(String titulo);
+
+    // Busca por gênero (exato)
+    List<LivroDocument> findByNomesGeneros(String genero);
+
+    // Filtro combinado (Título + Gênero)
+    List<LivroDocument> findByTituloContainingAndNomesGeneros(String titulo, String genero);
 }
