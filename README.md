@@ -37,7 +37,10 @@ Um dos pilares deste projeto é a confiabilidade. Utilizo **Testcontainers** par
 # 🛠️ Como Executar
 O projeto está totalmente "dockerizado", facilitando o setup em qualquer ambiente.
 1. Certifique-se de ter o **Docker** instalado.
-2. Clone o repositório.
+2. Clone o repositório e extraia:
+   ````
+   git clone https://github.com/ViniGBPl/biblioteca-api.git
+   ````
 3. Na raiz do projeto, execute:
    ````
    docker-compose up --build
