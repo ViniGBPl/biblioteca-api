@@ -46,6 +46,13 @@ O projeto está totalmente "dockerizado", facilitando o setup em qualquer ambien
    ````
    http://localhost:8080/swagger-ui/index.html
    ````
+   
+## 📖 Documentação da API (Swagger)
+
+Abaixo está a interface do Swagger UI, onde pode testar os endpoints de livros, autores, géneros e empréstimos:
+
+![Swagger UI](assets/swagger-ui.png)
+
 # 📈 Evolução e Aprendizados
 Este projeto foi fundamental para eu dominar:
 1. **Sincronização entre SQL e NoSQL**: Como manter o Elasticsearch atualizado conforme as mudanças no Postgres.
