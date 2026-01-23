@@ -54,7 +54,7 @@ O projeto está totalmente "dockerizado", facilitando o setup em qualquer ambien
 
 Abaixo está a interface do Swagger UI, onde pode testar os endpoints de livros, autores, géneros e empréstimos:
 
-![Swagger UI](assets/swagger-ui.PNG)
+![Swagger UI](assets/swagger-ui.png)
 
 # 📈 Evolução e Aprendizados
 Este projeto foi fundamental para eu dominar:
