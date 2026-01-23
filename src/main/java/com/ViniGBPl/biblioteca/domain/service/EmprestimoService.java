@@ -55,7 +55,7 @@ public class EmprestimoService {
         Livro livro = livroRepository.findById(livroId)
                 .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
 
-        // 1. Verificar se há alguém na fila para este livro
+        // Verificar se há alguém na fila para este livro
         var fila = filaEsperaRepository.findByLivroIdOrderByDataSolicitacaoAsc(livroId);
 
         if (!fila.isEmpty()) {
@@ -77,7 +77,7 @@ public class EmprestimoService {
             return "Livro devolvido e automaticamente emprestado para " + proximoDaFila.getNomeUsuario() + " (fila de espera).";
         }
 
-        // 2. Se não houver fila, o livro volta a ficar disponível
+        // Se não houver fila, o livro volta a ficar disponível
         livro.setDisponivel(true);
         livroRepository.save(livro);
 

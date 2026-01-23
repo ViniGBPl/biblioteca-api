@@ -20,16 +20,16 @@ public class LivroService {
     private final LivroRepository livroRepository;
     private final AutorService autorService;
     private final LivroSearchRepository livroSearchRepository;
-    private final GeneroRepository generoRepository; // 1. VOCÊ PRECISA INJETAR O REPOSITÓRIO AQUI
+    private final GeneroRepository generoRepository; // INJETAR O REPOSITÓRIO
 
     @Transactional
     public Livro salvar(Livro livro) {
-        // 2. Validar Autor
+        //  Validar Autor
         Long autorId = livro.getAutor().getId();
         Autor autor = autorService.buscarOurFalhar(autorId);
         livro.setAutor(autor);
 
-        // 3. Carregar Gêneros completos (usando a instância injetada 'generoRepository')
+        // Carregar Gêneros completos (usando a instância injetada 'generoRepository')
         if (livro.getGeneros() != null) {
             List<Genero> generosCompletos = livro.getGeneros().stream()
                     .map(g -> generoRepository.findById(g.getId())
@@ -38,15 +38,15 @@ public class LivroService {
             livro.setGeneros(generosCompletos);
         }
 
-        // 4. Garantir que o livro comece como disponível se for novo
+        // Garantir que o livro comece como disponível se for novo
         if (livro.getId() == null) {
             livro.setDisponivel(true);
         }
 
-        // 5. Salvar no Postgres
+        //Salvar no Postgres
         Livro livroSalvo = livroRepository.save(livro);
 
-        // 6. Sincronizar com Elasticsearch (Desnormalização)
+        //  Sincronizar com Elasticsearch (Desnormalização)
         List<String> nomesGeneros = livroSalvo.getGeneros().stream()
                 .map(Genero::getNome)
                 .toList();
@@ -63,4 +63,60 @@ public class LivroService {
 
         return livroSalvo;
     }
+
+    // atualizar livro
+    @Transactional
+    public Livro atualizar(Long livroId, Livro livroAtualizado) {
+        Livro livroExistente = livroRepository.findById(livroId)
+                .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
+
+        // Atualiza apenas os campos permitidos
+        livroExistente.setTitulo(livroAtualizado.getTitulo());
+        livroExistente.setIsbn(livroAtualizado.getIsbn());
+        livroExistente.setAnoPublicacao(livroAtualizado.getAnoPublicacao());
+
+        // Se o autor mudou, valida novamente
+        if (!livroExistente.getAutor().getId().equals(livroAtualizado.getAutor().getId())) {
+            livroExistente.setAutor(autorService.buscarOurFalhar(livroAtualizado.getAutor().getId()));
+        }
+
+        Livro livroSalvo = livroRepository.save(livroExistente);
+
+        // Sincroniza a atualização no Elasticsearch
+        syncElasticsearch(livroSalvo);
+
+        return livroSalvo;
+    }
+    // Deletar livro
+    @Transactional
+    public void excluir(Long livroId) {
+        if (!livroRepository.existsById(livroId)) {
+            throw new RuntimeException("Livro não encontrado");
+        }
+
+        // Remove do Postgres
+        livroRepository.deleteById(livroId);
+
+        // Remove do Elasticsearch
+        livroSearchRepository.deleteById(livroId.toString());
+    }
+
+    // Método auxiliar para evitar duplicação de código na sincronização
+    private void syncElasticsearch(Livro livro) {
+        List<String> nomesGeneros = livro.getGeneros().stream()
+                .map(Genero::getNome)
+                .toList();
+
+        LivroDocument document = LivroDocument.builder()
+                .id(livro.getId().toString())
+                .titulo(livro.getTitulo())
+                .autorNome(livro.getAutor().getNome())
+                .isbn(livro.getIsbn())
+                .nomesGeneros(nomesGeneros)
+                .build();
+
+        livroSearchRepository.save(document);
+    }
+
+
 }
