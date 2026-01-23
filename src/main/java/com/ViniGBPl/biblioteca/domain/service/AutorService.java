@@ -27,4 +27,23 @@ public class AutorService {
 
 
     }
+
+    @Transactional
+    public Autor atualizar(Long id, Autor autorAtualizado) {
+        Autor autorExistente = buscarOurFalhar(id);
+        autorExistente.setNome(autorAtualizado.getNome());
+        autorExistente.setNacionalidade(autorAtualizado.getNacionalidade());
+        return autorRepository.save(autorExistente);
+    }
+
+    @Transactional
+    public void excluir(Long id) {
+        Autor autor = buscarOurFalhar(id);
+        // Não deletar autor que possui livros
+        if (autor.getLivros() != null && !autor.getLivros().isEmpty()) {
+            throw new RuntimeException("Não é possível excluir um autor que possui livros cadastrados.");
+        }
+        autorRepository.delete(autor);
+    }
+
 }

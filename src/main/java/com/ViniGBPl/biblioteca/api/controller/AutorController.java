@@ -27,4 +27,15 @@ public class AutorController {
         return autorService.save(autor);
     }
 
+    @PutMapping("/{id}")
+    public Autor atualizar(@PathVariable Long id, @RequestBody Autor autor) {
+        return autorService.atualizar(id, autor);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void remover(@PathVariable Long id) {
+        autorService.excluir(id);
+    }
+
 }
